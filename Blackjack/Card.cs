@@ -6,48 +6,51 @@ using System.Threading.Tasks;
 
 namespace Blackjack
 {
-    public struct Card
+    public struct Cards
     {
+        // Creates 3 public variables
         public string CardSymbol { get; }
-        public int CardNumber { get; }
         public int CardRank { get; }
+        public int CardNumber { get; }
 
-        public Card(int cardNumber, string cardSymbol, int cardRank)
+        // Construcktor
+        public Cards(string cardSymbol, int cardRank, int cardNumber)
         {
-            CardNumber = cardNumber;
-            CardSymbol = cardSymbol;
-            CardRank = cardRank;
+            this.CardSymbol = cardSymbol;
+            this.CardRank = cardRank;
+            this.CardNumber = cardNumber;
         }
 
-        // Making a override ToString
+        // ToString Override
         public override string ToString()
         {
-            // Here I say if the card number is 11 or higher we look at the number and return knight, queen or king instead of a number
-            if(CardNumber >= 11)
+            if (CardNumber > 10)
             {
-                string cardKQK = "";
+                string cardWithPicture = "";
+
+                // Switches the cardNumbers 11,12,13 with the name of thier picture
                 switch (CardNumber)
                 {
                     case 11:
-                        cardKQK = "Knight";
+                        cardWithPicture = "Knight";
                         break;
                     case 12:
-                        cardKQK = "Queen";
+                        cardWithPicture = "Queen";
                         break;
                     case 13:
-                        cardKQK = "King";
+                        cardWithPicture = "King";
                         break;
                     default:
                         break;
                 }
-
-                return CardSymbol + ": " + cardKQK;
+                // returns the symbol with the name of the picture card
+                return CardSymbol + ":" + cardWithPicture;
             }
             else
             {
-                return CardSymbol + ": " + CardNumber;
+                // Returns the symbol with the cards number
+                return CardSymbol + ":" + CardNumber;
             }
         }
-
     }
 }

@@ -7,133 +7,106 @@ using System.Threading.Tasks;
 
 namespace Blackjack
 {
-    // I did not finish this assignment,
-    // becuase i ran out of time.
-    // I spent most of the time trying to figure out how to make this assignment.
 
-    class Program
+    internal class Program
     {
         static void Main(string[] args)
         {
-            string cardSymbol = "";
-            int cardRank = 0;
+            // Variables for deciding What is going to happen
             string yesNo;
+            bool playerTurn = true;
 
-            List<Card> playerCards = new List<Card>();
-            List<Card> computerCards = new List<Card>();
+            // I make a objekt deck using my class called deck 
+            Deck deck = new Deck();
 
-            int[,] cards = new int[,]
-            {
-                { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13},
-                { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13},
-                { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13},
-                { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13},
-            };
-
-            Random rnd = new Random();
-
-
-
-            Console.WriteLine("Vil du spille? (y/n)");
+            // Asking the user if the are ready to play.
+            Console.WriteLine("Klar til at spille (y/n)");
             yesNo = Console.ReadLine().ToLower();
 
-            if(yesNo == "y")
+            //Checks if user said yes
+            if (yesNo == "y")
             {
-                Console.WriteLine("Shuffling the cards");
-                Thread.Sleep(2000);
+                // I clear the console
+                Console.Clear();
 
-                Console.WriteLine("Dealing cards");
-                Thread.Sleep(2000);
-
-                Console.WriteLine("Player Cards:");
-                // Making a for loop, so i so im dealt two cards
+                // A for loop to pickup 2 cards for the player
                 for (int i = 0; i < 2; i++)
                 {
-                    int symbol = rnd.Next(0, cards.GetLength(0));
-                    int number = rnd.Next(0, cards.GetLength(1));
-
-                    int cardNumber = cards[symbol, number];
-                    cardRank = cardNumber;
-
-                    // When the cards that have a higher card number the 10 we set the value of them to 10
-                    if(cardRank >= 11)
-                    {
-                        cardRank = 10;
-                    }
-
-                    // Making so we can see what card symbol we have on our card.
-                    switch (symbol)
-                    {
-                        case 0:
-                            cardSymbol = "Diamond";
-                            break;
-                        case 1:
-                            cardSymbol = "Clubs";
-                            break;
-                        case 2:
-                            cardSymbol = "Hearts";
-                            break;
-                        case 3:
-                            cardSymbol = "Spades";
-                            break;
-                        default:
-                            break;
-                    }
-                    
-
-                    Card card = new Card(cardNumber, cardSymbol, cardRank);
-                    // Adding the card to the list
-                    playerCards.Add(card);
-                }
-                // Displaying the players hand
-                foreach (Card u in playerCards)
-                {
-                    Console.WriteLine(u);
+                    deck.PickUp(playerTurn);
                 }
 
-                Console.WriteLine("Computer Cards:");
+                // Setting the bool to false So that we indicate that it is the computers turn to pickup cards
+                playerTurn = false;
+
+                // A for loop to pickup 2 cards for the computer
                 for (int i = 0; i < 2; i++)
                 {
-                    int symbol = rnd.Next(0, cards.GetLength(0));
-                    int number = rnd.Next(0, cards.GetLength(1));
-
-                    int cardNumber = cards[symbol, number];
-                    cardRank = cardNumber;
-
-                    if (cardRank >= 11)
-                    {
-                        cardRank = 10;
-                    }
-
-                    switch (symbol)
-                    {
-                        case 0:
-                            cardSymbol = "Diamond";
-                            break;
-                        case 1:
-                            cardSymbol = "Clubs";
-                            break;
-                        case 2:
-                            cardSymbol = "Hearts";
-                            break;
-                        case 3:
-                            cardSymbol = "Spades";
-                            break;
-                        default:
-                            break;
-                    }
-
-                    Card card = new Card(cardNumber, cardSymbol, cardRank);
-                    computerCards.Add(card);
+                    deck.PickUp(playerTurn);
                 }
-                foreach (Card u in computerCards)
+
+                // Runs a method to show all the players cards and one of the computers cards
+                deck.showTablePlayersTurn();
+
+                // A loop that asks users if they want to pickup another card
+                do
                 {
-                    Console.WriteLine(u);
+                    // Asks the user to hit or not
+                    Console.WriteLine("Vil du 'hit' (y/n)");
+                    yesNo = Console.ReadLine().ToLower();
+
+                    // Checks choice
+                    if (yesNo == "y")
+                    {
+                        // Sets it to the players turn to pickup cards and picks up one card
+                        playerTurn = true;
+                        deck.PickUp(playerTurn);
+                    }
+
+                    // Shows players cards and one of computers cards
+                    deck.showTablePlayersTurn();
+                } while (yesNo != "n");
+
+                // A do/while loop for the computer to pickup cards
+                do
+                {
+                    // Checks if the computers cards sum is less then 15, if it is then it picks up a card
+                    if (deck.ComputerSum < 15)
+                    {
+                        yesNo = "y";
+                        playerTurn = false;
+                        deck.PickUp(playerTurn);
+                    }
+                    // if not then it says no
+                    else
+                    {
+                        yesNo = "n";
+                    }
+
+                    // Shows all players cards and all computers cards
+                    deck.showTable();
+
+                } while (yesNo != "n");
+
+                // Waits 3 seconds so it doesn't let the user see what the computer picked up
+                Thread.Sleep(3000);
+
+                // Checks whos closer, palyer or computer
+                if (21 - deck.PlayerSum < 21 - deck.ComputerSum)
+                {
+                    Console.Clear();
+                    Console.WriteLine("Player WON!!!!");
+                }
+                else if (deck.PlayerSum == deck.ComputerSum)
+                {
+                    Console.Clear();
+                    Console.WriteLine("Both Win");
+                }
+                else
+                {
+                    Console.Clear();
+                    Console.WriteLine("Computer Won!!!!!");
                 }
 
-            } else
-            {
-                Environment.Exit(1);
             }
 
             Console.ReadLine();
